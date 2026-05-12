@@ -33,7 +33,6 @@ public class main extends RuntimeException {
 		telinha.setBackground(Color.black);
 		
 		JTextArea visor = new JTextArea();
-		visor.setEditable(false);
 		telinha.add(visor, BorderLayout.NORTH);
 		telinha.setSize(340, 100);
 		
@@ -158,20 +157,30 @@ public class main extends RuntimeException {
 				System.out.println(partes.length);
 				ArrayList<Float> nums = new ArrayList<>();
 				ArrayList<String> oper = new ArrayList<>();
-				for (int i=0; i < partes.length; i++) {
-					if (i % 2 == 0) {
-						nums.add(Float.parseFloat(partes[i]));
-					} else if (i % 2 != 0){
-						oper.add(partes[i]);
+				try {
+					for (int i=0; i < partes.length; i++) {
+						if (i % 2 == 0) {
+							nums.add(Float.parseFloat(partes[i]));
+						} else if (i % 2 != 0){
+							oper.add(partes[i]);
+						}
 					}
+					float result = nums.get(0);
+					try{
+						for (int x = 0; x < oper.size(); x++) {
+							result = Calcular(nums.get(x+1), oper.get(x), result);
+						}
+						if(!Double.isInfinite(result)) {
+							visor.setText(String.valueOf(result));
+						} else {
+							throw new ArithmeticException();
+						}
+					} catch (ArithmeticException x) {
+						BalaException("não é possivel fazer divisão por 0");
+					}
+				} catch (Exception x) {
+					BalaException("apenas caracteres numericos e simbolos de operações matematicas");
 				}
-				float result = nums.get(0);
-				for (int x = 0; x < oper.size(); x++) {
-					result = Calcular(nums.get(x+1), oper.get(x), result);
-					System.out.println(nums.get(x+1) + "+" + oper.get(x) + "=" + result + " " + nums.size() + " " + oper.size());
-				}
-				
-				visor.setText(String.valueOf(result));
 			}
 		});
 		JButton vir = new JButton(",");
@@ -217,12 +226,8 @@ public class main extends RuntimeException {
 			System.out.println("esta subtraindo");
 			break;
 		case "/":
-			try{
-				result /= num1;
-				System.out.println("esta dividindo");
-			} catch (Exception e) {
-				BalaException("não é possivel fazer divisão por 0");
-			}
+			result /= num1;
+			System.out.println("esta dividindo");
 			break;
 		case "*":
 			result *= num1;
